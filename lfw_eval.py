@@ -71,6 +71,8 @@ def get_image(samples, transformer, file):
     sample = filtered[0]
     full_path = sample['full_path']
     landmarks = sample['landmarks']
+    if not landmarks:
+        return None
     img = align_face(full_path, landmarks)  # BGR
     # img = blur_and_grayscale(img)
     img = img[..., ::-1]  # RGB
@@ -105,9 +107,11 @@ def evaluate(model):
             file1 = tokens[1]
             img1 = get_image(samples, transformer, file1)
             imgs = torch.zeros([2, 3, 112, 112], dtype=torch.float, device=device)
+            
+            if img0 is None or img1 is None:
+                continue
             imgs[0] = img0
             imgs[1] = img1
-
             output = model(imgs)
 
             feature0 = output[0].cpu().numpy()
@@ -311,8 +315,8 @@ def lfw_test(model):
         extract(filename)
 
     # if not os.path.isfile(lfw_pickle):
-    print('Processing {}...'.format(lfw_pickle))
-    process()
+    # print('Processing {}...'.format(lfw_pickle))
+    # process()
 
     # if not os.path.isfile(angles_file):
     print('Evaluating {}...'.format(angles_file))

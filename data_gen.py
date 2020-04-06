@@ -28,6 +28,7 @@ class ArcFaceDataset(Dataset):
     def __init__(self, split):
         with open(pickle_file, 'rb') as file:
             data = pickle.load(file)
+            # print(data)
 
         self.split = split
         self.samples = data
